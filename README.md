@@ -1,34 +1,51 @@
+
 # Roteirize API
 
 Back-end do Roteirize, um app colaborativo de planejamento de viagens em grupo.
 
-> **Status:** em desenvolvimento inicial. Apenas o esqueleto do servidor está implementado.
+> **Status:** em desenvolvimento inicial. Servidor com conexão ao banco de dados configurada.
 
 ## Stack
 
 - Node.js 20+
 - TypeScript
 - Express
+- PostgreSQL 16
+- pg (node-postgres)
 - tsx (execução e hot-reload em desenvolvimento)
+- Docker
 
 ## Pré-requisitos
 
 - Node.js 20 ou superior ([download](https://nodejs.org))
 - npm (incluído no Node)
+- Docker ([download](https://docs.docker.com/get-docker))
 
 ## Como rodar
 
 Clonar o repositório e entrar na pasta:
 
 ```bash
-git clone https://github.com/SEU_USUARIO/roteirize-api.git
-cd roteirize-api
+git clone https://github.com/erikalps/Roteirize.git
+cd Roteirize
 ```
 
 Instalar dependências:
 
 ```bash
 npm install
+```
+
+Copiar o arquivo de variáveis de ambiente:
+
+```bash
+cp .env.example .env
+```
+
+Subir o banco de dados:
+
+```bash
+docker compose up -d
 ```
 
 Subir o servidor em modo de desenvolvimento:
@@ -41,9 +58,9 @@ O servidor estará disponível em `http://localhost:3001`.
 
 ## Endpoints disponíveis
 
-| Método | Rota      | Descrição                                |
-| ------ | --------- | ---------------------------------------- |
-| GET    | `/health` | Verifica se o servidor está respondendo. |
+| Método | Rota      | Descrição                                         |
+| ------ | --------- | ------------------------------------------------- |
+| GET    | `/health` | Verifica se o servidor e o banco estão operantes. |
 
 Exemplo:
 
@@ -54,16 +71,20 @@ curl http://localhost:3001/health
 Resposta esperada:
 
 ```json
-{ "status": "ok" }
+{ "status": "ok", "db": "connected" }
 ```
 
 ## Estrutura do projeto
 
 ```
-roteirize-api/
+Roteirize/
 ├── src/
-│   └── server.ts       # ponto de entrada do servidor
+│   ├── config/
+│   │   └── db.ts           # singleton de conexão com o banco
+│   └── server.ts           # ponto de entrada do servidor
+├── .env.example
 ├── .gitignore
+├── docker-compose.yml
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -71,7 +92,6 @@ roteirize-api/
 
 ## Roadmap próximo
 
-- [ ] Integração com Postgres via Docker e Prisma
 - [ ] Cadastro de usuário (`POST /users`)
 - [ ] Autenticação com JWT
 - [ ] Gestão de viagens
