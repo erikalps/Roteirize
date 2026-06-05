@@ -1,16 +1,14 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt'
 import { db } from '../config/db';
+import { validate } from '../middlewares/validate';
+import { createUserSchema } from '../schemas/userSchema';
 
 const router = Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', validate(createUserSchema), async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
 
-
-    if (!name || !email || !password) {
-        return res.status(400).json({ error: 'name, email e password são obrigatorios!!' })
-    }
 
     try {
         const passwordHash = await bcrypt.hash(password, 10)
