@@ -2,12 +2,14 @@
 import 'dotenv/config';
 import express from 'express';
 import { db } from './config/db';
+import usersRouter from './routes/users';
 
 
 const app = express();
 const PORT = 3001;
 
 app.use(express.json());
+app.use('/users', usersRouter)
 
 app.get('/health', async (_req, res) => {
   try {
