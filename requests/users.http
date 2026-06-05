@@ -1,0 +1,38 @@
+### Cadastro válido
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "name": "Erika",
+  "email": "erika@email.com",
+  "password": "12345678a"
+}
+
+### Email inválido
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "name": "Erika",
+  "email": "emailinvalido",
+  "password": "12345678a"
+}
+
+### Senha sem número
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "name": "Erika",
+  "email": "erika@email.com",
+  "password": "semNumero"
+}
+
+### Campo faltando
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "name": "Erika",
+  "email": "erika@email.com"
+}
