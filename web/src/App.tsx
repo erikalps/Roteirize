@@ -1,11 +1,12 @@
+import SingUp from "./pages/SignUp"
 
 
 function App() {
- 
+
 
   return (
     <>
-     <h1>Hello roteirize</h1>
+     <SingUp></SingUp>
     </>
   )
 }
