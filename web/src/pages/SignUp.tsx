@@ -1,113 +1,138 @@
-import { useState } from "react"
+import { useState } from 'react'
+import api from '../services/api'
 
+export default function SignUp() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [generalError, setGeneralError] = useState('')
 
-function SingUp() {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [passWord, setPassWord] = useState('')
-    const [confirmPassWord, setConfirmPassWord] = useState('')
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  })
 
+  function validate() {
+    const newErrors = { name: '', email: '', password: '', confirmPassword: '' }
+    let valid = true
 
-    const [errors, setErrors] = useState({
-        name: '',
-        email: '',
-        passWord: '',
-        confirmPassWord: ' '
-
-    })
-
-
-    function validate() {
-        const newErros = { name: '', email: '', passWord: '', confirmPassWord: '' }
-
-        let valid = true
-
-        if (!name) {
-            newErros.name = 'Nome é obrigatório'
-            valid = false
-        }
-
-        if (!email) {
-            newErros.email = 'Email é obrigatório'
-            valid = false
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            newErros.email = 'Email invalido'
-            valid = false
-        }
-
-        if (!passWord) {
-            newErros.passWord = 'Senha é obrigatória'
-            valid = false
-        } else if (passWord.length < 8) {
-            newErros.passWord = 'A senha deve ter no mínimo 8 caracters'
-        }
-
-        if (!confirmPassWord) {
-            newErros.confirmPassWord = 'Confirme sua senha'
-            valid = false
-        } else if (confirmPassWord != passWord) {
-            newErros.confirmPassWord = 'As senhas não coincidem'
-            valid = false
-        }
-
-        setErrors(newErros)
-        return valid
-
-    }
-    const isFormValid =
-        !!name &&
-        !!email &&
-        !!passWord &&
-        !!confirmPassWord &&
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
-        passWord.length >= 8 &&
-        passWord === confirmPassWord
-
-    function handleSubmit() {
-        if (!validate()) return
-        console.log({ name, email, passWord })
+    if (!name) {
+      newErrors.name = 'Nome é obrigatório'
+      valid = false
     }
 
-    return (
-        <div className="singUp-container">
-            <h1>Cadastro</h1>
-            <form action="">
-                <div className="SingUp-input">
-                    <label htmlFor="name">Nome</label>
-                    <input
-                        type="text" placeholder="Nome"
-                        required value={name} id="name"
-                        onChange={e => setName(e.target.value)}
-                    />
-                       {errors.name && <p>{errors.name}</p>}
-                </div>
-                <div className="SingUp-input">
-                    <label htmlFor="email">Email</label>
-                    <input type="email" placeholder="Email:" required value={email} id="email"
-                        onChange={e => setEmail(e.target.value)}
-                    />
-                    {errors.email && <p>{errors.email}</p>}
-                </div>
-                <div className="SingUp-input">
-                    <label htmlFor="passWord" >PassWord</label>
-                    <input type="text" placeholder="Senha:" required value={passWord} id="PassWord"
-                        onChange={e => setPassWord(e.target.value)}
-                    />
-                     {errors.passWord && <p>{errors.passWord}</p>}
-                </div>
-                <div className="SingUp-input">
-                    <label htmlFor="confiPass">Confirme a senha</label>
-                    <input type="text" placeholder="Confirme a senha" required value={confirmPassWord} id="confiPass"
-                        onChange={e => setConfirmPassWord(e.target.value)}
-                    />
-                     {errors.confirmPassWord && <p>{errors.confirmPassWord}</p>}
-                </div>
+    if (!email) {
+      newErrors.email = 'Email é obrigatório'
+      valid = false
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'Email inválido'
+      valid = false
+    }
 
-                <button onClick={handleSubmit} disabled={!isFormValid}>Cadastrar</button>
+    if (!password) {
+      newErrors.password = 'Senha é obrigatória'
+      valid = false
+    } else if (password.length < 8) {
+      newErrors.password = 'Senha deve ter no mínimo 8 caracteres'
+      valid = false
+    }
 
-            </form>
-        </div>
-    )
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Confirme sua senha'
+      valid = false
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'As senhas não coincidem'
+      valid = false
+    }
+
+    setErrors(newErrors)
+    return valid
+  }
+
+  const isFormValid =
+    !!name &&
+    !!email &&
+    !!password &&
+    !!confirmPassword &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+    password.length >= 8 &&
+    password === confirmPassword
+
+  async function handleSubmit() {
+    if (!validate()) return
+
+    setLoading(true)
+    setGeneralError('')
+    setSuccessMessage('')
+
+    try {
+      await api.post('/users', { name, email, password })
+      setSuccessMessage('Cadastro realizado com sucesso!')
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        setErrors(prev => ({ ...prev, email: 'Este email já está cadastrado' }))
+      } else {
+        setGeneralError('Não foi possível concluir o cadastro')
+        console.log(err)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div>
+      <h1>Cadastro</h1>
+
+      {successMessage && <p>{successMessage}</p>}
+      {generalError && <p>{generalError}</p>}
+
+      <div>
+        <input
+          placeholder="Nome"
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+        {errors.name && <p>{errors.name}</p>}
+      </div>
+
+      <div>
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        {errors.email && <p>{errors.email}</p>}
+      </div>
+
+      <div>
+        <input
+          type="password"
+          placeholder="Senha"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        {errors.password && <p>{errors.password}</p>}
+      </div>
+
+      <div>
+        <input
+          type="password"
+          placeholder="Confirmar senha"
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
+        />
+        {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
+      </div>
+
+      <button onClick={handleSubmit} disabled={!isFormValid || loading}>
+        {loading ? 'Cadastrando...' : 'Cadastrar'}
+      </button>
+    </div>
+  )
 }
-
-export default SingUp;
