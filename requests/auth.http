@@ -1,0 +1,43 @@
+### Login com credenciais válidas
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "zorudo@gmail.com",
+  "password": "789456123Z@"
+}
+
+### Login com email inexistente
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "naoexiste@email.com",
+  "password": "senha123"
+}
+
+### Login com senha errada
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "doug@email.com",
+  "password": "senhaerrada"
+}
+
+### Login sem o campo email
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "password": "senha123"
+}
+
+### Login com email mal formatado
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "abc",
+  "password": "senha123"
+}

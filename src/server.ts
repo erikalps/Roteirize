@@ -4,11 +4,13 @@ import express from 'express';
 import cors from 'cors'
 import { db } from './config/db';
 import usersRouter from './routes/users';
+import authRouter from './routes/auth'
 
 
-
+console.log('JWT_SECRET carregada?', process.env.JWT_SECRET ? 'sim' : 'NÃO')
 const app = express();
 const PORT = 3001;
+
 
 
 app.use(cors({
@@ -17,6 +19,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/users', usersRouter)
+app.use('/auth', authRouter)
 
 app.get('/health', async (_req, res) => {
   try {
