@@ -36,3 +36,22 @@ Content-Type: application/json
   "name": "Erika",
   "email": "erika@email.com"
 }
+
+
+### Me - usuário autenticado
+GET http://localhost:3001/auth/me
+Authorization: Bearer <cole_aqui_o_token_do_login>
+
+
+### Login
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "dougnobrega@gmail.com",
+  "password": "doug1234@"
+}
+
+### Me - usuário autenticado
+GET http://localhost:3001/auth/me
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3Y2NlM2JiNC05NjMxLTRhM2MtOWFkMi03YzAyYWRiYWY5YTUiLCJlbWFpbCI6ImRvdWdub2JyZWdhQGdtYWlsLmNvbSIsImlhdCI6MTc4Mjg1MTcxNiwiZXhwIjoxNzgzNDU2NTE2fQ.a0x5ed7CWM0aVnUJAepJRzVyOJDx6mqxujCIM8o-lr0
