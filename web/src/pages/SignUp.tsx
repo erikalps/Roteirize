@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import api from '../services/api'
+import { Link } from 'react-router'
 
 export default function SignUp() {
   const [name, setName] = useState('')
@@ -133,6 +134,7 @@ export default function SignUp() {
       <button onClick={handleSubmit} disabled={!isFormValid || loading}>
         {loading ? 'Cadastrando...' : 'Cadastrar'}
       </button>
+      <p>Já tem conta?<Link to="/login">Entrar</Link></p>
     </div>
   )
 }
