@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from 'react-router'
-
+import { Link, useNavigate } from 'react-router'
+import api from "../services/api";
 
 
 function Login(){
@@ -8,7 +8,10 @@ function Login(){
     const [passWord, setPassWord] = useState('');
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({ email: '', password: '' })
+    const [loading, setLoading] = useState(false)
+    const [generalError, setGeneralError] = useState('')
 
+    const navigate = useNavigate()
 
 
     function validate(){
@@ -37,13 +40,33 @@ function Login(){
         !!email && !!passWord &&  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
     
-        function handleSubmit(){
+         async function handleSubmit(){
             if(!validate()) return
-             console.log({ email, passWord })
+             
+            setLoading(true)
+            setGeneralError('')
+            
+            try {
+                
+                const response = await api.post('/auth/login', {email, password: passWord })
+                localStorage.setItem('roteirize_token', response.data.token)
+                navigate('/dashboard')
+
+
+            } catch (err: any) {
+                if(err.response?.status === 401){
+                    setGeneralError('Email ou senha inválidos')
+                } else {
+                    setGeneralError('Erro ao conectar com o servidor')
+                }
+            } finally {
+                setLoading(false)
+            }
         }
 
     return(
         <div className="container-login">
+            {generalError && <p>{generalError}</p>}
                <div>
                 <label htmlFor="email">Email</label>
                 <input type= "email" id="email" required value={email} onChange={(e)=> setEmail(e.target.value)}/>
@@ -54,7 +77,7 @@ function Login(){
                     <input type="password" id="passWord" required value={passWord} onChange ={(e) => setPassWord(e.target.value)}/>
                     {errors.password && <p>{errors.password}</p>}
                 </div>
-                <button onClick={handleSubmit} disabled = {!isFormValid}>Entrar</button>
+                <button onClick={handleSubmit} disabled = {!isFormValid || loading}>{loading ? 'Entrando..': 'Entrar'}</button>
                  <p>Não tem conta? <Link to="/signup">Cadastre-se</Link></p>
         </div>
     )
