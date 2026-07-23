@@ -22,7 +22,7 @@ app.get('/health', async (_req, res) => {
     res.status(200).json({ status: 'ok', db: 'connected' });
   } catch (error) {
     console.error('DB connection error:', error);
-    res.status(500).json({ status: 'ok', db: 'disconnected' });
+    res.status(500).json({ status: 'error', db: 'disconnected' });
   }
 });
 
