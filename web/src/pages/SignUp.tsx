@@ -41,6 +41,9 @@ export default function SignUp() {
     } else if (password.length < 8) {
       newErrors.password = 'Senha deve ter no mínimo 8 caracteres'
       valid = false
+    } else if (!/\d/.test(password)) {
+      newErrors.password = 'Senha deve ter pelo menos um número'
+      valid = false
     }
 
     if (!confirmPassword) {
@@ -59,10 +62,7 @@ export default function SignUp() {
     !!name &&
     !!email &&
     !!password &&
-    !!confirmPassword &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
-    password.length >= 8 &&
-    password === confirmPassword
+    !!confirmPassword 
 
   async function handleSubmit() {
     if (!validate()) return
@@ -77,6 +77,14 @@ export default function SignUp() {
     } catch (err: any) {
       if (err.response?.status === 409) {
         setErrors(prev => ({ ...prev, email: 'Este email já está cadastrado' }))
+      } else if (err.response?.status === 400) {
+        const fields = err.response.data.fields
+        setErrors(prev => ({
+          ...prev,
+          ...(fields.name && { name: fields.name[0] }),
+          ...(fields.email && { email: fields.email[0] }),
+          ...(fields.password && { password: fields.password[0] }),
+        }))
       } else {
         setGeneralError('Não foi possível concluir o cadastro')
         console.log(err)
