@@ -87,7 +87,7 @@ export default function SignUp() {
         }))
       } else {
         setGeneralError('Não foi possível concluir o cadastro')
-        console.log(err)
+        
       }
     } finally {
       setLoading(false)
