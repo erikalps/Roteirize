@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt'
 import { db } from '../config/db';
 import { validate } from '../middlewares/validate';
 import { createUserSchema } from '../schemas/userSchema';
+import { isUniqueViolation } from '../utils/db-errors';
+
 
 const router = Router();
 
@@ -24,13 +26,12 @@ router.post('/', validate(createUserSchema), async (req: Request, res: Response)
 
 
 
-    } catch(error:any){
-        if(error.code =='23505'){
-            return res.status(409).json({error:'Este email já está cadastrado'});
+    } catch (error: unknown) {
+        if (isUniqueViolation(error)) {
+            return res.status(409).json({ error: 'Este email já está cadastrado' });
         }
 
-
-        return res.status(500).json({error:'Erro interno do servidor'})
+        return res.status(500).json({ error: 'Erro interno do servidor' });
     }
 });
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router'
 import api from "../services/api";
-
+import { isValidEmail} from '../utils/validation'
 
 function Login(){
 
-    const [passWord, setPassWord] = useState('');
+    const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({ email: '', password: '' })
     const [loading, setLoading] = useState(false)
@@ -20,15 +20,15 @@ function Login(){
         let valid = true
 
         if(!email){
-            newErrors.email = 'Email é Obrigatório!'
+            newErrors.email = 'Email é obrigatório!'
             valid = false
-        } else if  (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            newErrors.email  = "Emai Inválido!!"
+        } else if  (!isValidEmail(email)){
+            newErrors.email  = "Email inválido!"
             valid = false
         }
 
-        if(!passWord){
-            newErrors.password = ' A senha é Obrigatória!'
+        if(!password){
+            newErrors.password = 'A senha é obrigatória!'
             valid = false;
         } 
 
@@ -36,8 +36,7 @@ function Login(){
         return valid
     }
 
-    const isFormValid = 
-        !!email && !!passWord &&  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    const isFormValid = !!email && !!password 
 
     
          async function handleSubmit(){
@@ -48,12 +47,13 @@ function Login(){
             
             try {
                 
-                const response = await api.post('/auth/login', {email, password: passWord })
+                const response = await api.post('/auth/login', {email, password })
                 localStorage.setItem('roteirize_token', response.data.token)
                 navigate('/dashboard')
 
 
             } catch (err: any) {
+                console.log(err)
                 if(err.response?.status === 401){
                     setGeneralError('Email ou senha inválidos')
                 } else {
@@ -73,11 +73,11 @@ function Login(){
                 {errors.email && <p>{errors.email}</p>}
                </div>
                 <div>
-                    <label htmlFor="passWord">Senha</label>
-                    <input type="password" id="passWord" required value={passWord} onChange ={(e) => setPassWord(e.target.value)}/>
+                    <label htmlFor="password">Senha</label>
+                    <input type="password" id="password" required value={password} onChange ={(e) => setPassword(e.target.value)}/>
                     {errors.password && <p>{errors.password}</p>}
                 </div>
-                <button onClick={handleSubmit} disabled = {!isFormValid || loading}>{loading ? 'Entrando..': 'Entrar'}</button>
+                <button onClick={handleSubmit} disabled = {!isFormValid || loading}>{loading ? 'Entrando...': 'Entrar'}</button>
                  <p>Não tem conta? <Link to="/signup">Cadastre-se</Link></p>
         </div>
     )

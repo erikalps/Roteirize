@@ -24,9 +24,9 @@ router.post('/login', validate(loginSchema), async (req, res) => {
     }
 
     const user = result.rows[0]
-    const senhaCorreta = await bcrypt.compare(password, user.password_hash)
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash)
 
-    if (!senhaCorreta) {
+    if (!isPasswordValid) {
       return res.status(401).json({ error: 'Credenciais inválidas' })
     }
 
