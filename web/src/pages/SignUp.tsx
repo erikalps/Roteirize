@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import api from '../services/api'
 import { Link } from 'react-router'
+import { isValidEmail, MIN_PASSWORD_LENGTH } from '../utils/validation'
 
 export default function SignUp() {
   const [name, setName] = useState('')
@@ -30,7 +31,7 @@ export default function SignUp() {
     if (!email) {
       newErrors.email = 'Email é obrigatório'
       valid = false
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!isValidEmail(email)) {
       newErrors.email = 'Email inválido'
       valid = false
     }
@@ -38,7 +39,7 @@ export default function SignUp() {
     if (!password) {
       newErrors.password = 'Senha é obrigatória'
       valid = false
-    } else if (password.length < 8) {
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
       newErrors.password = 'Senha deve ter no mínimo 8 caracteres'
       valid = false
     } else if (!/\d/.test(password)) {

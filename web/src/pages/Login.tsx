@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router'
 import api from "../services/api";
-
+import { isValidEmail} from '../utils/validation'
 
 function Login(){
 
@@ -22,7 +22,7 @@ function Login(){
         if(!email){
             newErrors.email = 'Email é obrigatório!'
             valid = false
-        } else if  (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        } else if  (!isValidEmail(email)){
             newErrors.email  = "Email inválido!"
             valid = false
         }
@@ -36,8 +36,7 @@ function Login(){
         return valid
     }
 
-    const isFormValid = 
-        !!email && !!password &&  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    const isFormValid = !!email && !!password 
 
     
          async function handleSubmit(){
