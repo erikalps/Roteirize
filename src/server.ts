@@ -6,12 +6,13 @@ import { db } from './config/db';
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
 
-
 const app = express();
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-}));
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+);
 
 app.use(express.json());
 app.use('/users', usersRouter);

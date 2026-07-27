@@ -1,39 +1,37 @@
 import { Router, Request, Response } from 'express';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import { db } from '../config/db';
 import { validate } from '../middlewares/validate';
 import { createUserSchema } from '../schemas/userSchema';
 import { isUniqueViolation } from '../utils/db-errors';
 
-
 const router = Router();
 
-router.post('/', validate(createUserSchema), async (req: Request, res: Response) => {
+router.post(
+  '/',
+  validate(createUserSchema),
+  async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
 
-
     try {
-        const passwordHash = await bcrypt.hash(password, 10)
+      const passwordHash = await bcrypt.hash(password, 10);
 
-        const result = await db.query(
-            `INSERT INTO users (name, email, password_hash)
+      const result = await db.query(
+        `INSERT INTO users (name, email, password_hash)
              VALUES ($1, $2, $3)
              RETURNING id, name, email, created_at`,
-            [name, email, passwordHash]
-        );
+        [name, email, passwordHash]
+      );
 
-        return res.status(201).json(result.rows[0]);
-
-
-
+      return res.status(201).json(result.rows[0]);
     } catch (error: unknown) {
-        if (isUniqueViolation(error)) {
-            return res.status(409).json({ error: 'Este email já está cadastrado' });
-        }
+      if (isUniqueViolation(error)) {
+        return res.status(409).json({ error: 'Este email já está cadastrado' });
+      }
 
-        return res.status(500).json({ error: 'Erro interno do servidor' });
+      return res.status(500).json({ error: 'Erro interno do servidor' });
     }
-});
-
+  }
+);
 
 export default router;
