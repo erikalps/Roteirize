@@ -5,5 +5,5 @@ export function isUniqueViolation(error: unknown): boolean {
     typeof error === 'object' &&
     'code' in error &&
     error.code === '23505'
-  )
+  );
 }

@@ -1,16 +1,18 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { env } from './config/env';
 import { db } from './config/db';
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
 
 const app = express();
-const PORT = 3001;
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-}));
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+);
 
 app.use(express.json());
 app.use('/users', usersRouter);
@@ -26,6 +28,6 @@ app.get('/health', async (_req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(env.PORT, () => {
+  console.log(`Server running on http://localhost:${env.PORT}`);
 });

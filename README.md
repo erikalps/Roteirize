@@ -63,10 +63,14 @@ Back-end em `http://localhost:3001`, front-end em `http://localhost:5173`.
 | GET    | `/auth/me`   | Sim          | Dados do usuário autenticado       |
 
 ## Estrutura do projeto
+
+```
 Roteirize/
 ├── src/
 │   ├── config/
 │   │   └── db.ts
+│   ├── database/
+│   │   └── migrations/
 │   ├── middlewares/
 │   │   ├── validate.ts
 │   │   └── authenticate.ts
@@ -79,20 +83,26 @@ Roteirize/
 │   ├── types/
 │   │   └── express.d.ts
 │   └── server.ts
+├── requests/
 ├── web/
 │   └── src/
 │       ├── pages/
-│       │   └── SignUp.tsx
+│       │   ├── SignUp.tsx
+│       │   ├── Login.tsx
+│       │   └── Dashboard.tsx
+│       ├── features/
+│       │   └── auth/
 │       ├── services/
 │       │   └── api.ts
 │       └── App.tsx
 ├── docker-compose.yml
 ├── tsconfig.json
 └── README.md
+```
 
 ## Roadmap
 
-- [ ] Tela de login no front-end
+- [x] Tela de login no front-end
 - [ ] Rotas protegidas no front-end
 - [ ] CRUD de viagens
 - [ ] Grupos e convites
