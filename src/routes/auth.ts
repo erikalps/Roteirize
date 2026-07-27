@@ -5,6 +5,7 @@ import { db } from '../config/db'
 import { validate } from '../middlewares/validate'
 import { loginSchema } from '../schemas/authSchema'
 import {authenticate} from '../middlewares/authenticate'
+import { env } from '../config/env'
 
 
 
@@ -32,7 +33,7 @@ router.post('/login', validate(loginSchema), async (req, res) => {
 
     const token = jwt.sign(
       { userId: user.id, email: user.email },
-      process.env.JWT_SECRET!,
+      env.JWT_SECRET,
       { expiresIn: '7d' }
     )
 
