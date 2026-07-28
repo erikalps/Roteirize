@@ -23,7 +23,14 @@ router.post(
         [name, email, passwordHash]
       );
 
-      return res.status(201).json(result.rows[0]);
+      const user = result.rows[0];
+
+      return res.status(201).json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.created_at,
+      });
     } catch (error: unknown) {
       if (isUniqueViolation(error)) {
         return res.status(409).json({ error: 'Este email já está cadastrado' });

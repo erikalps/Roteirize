@@ -2,7 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import api from '../services/api'
 import { Link } from 'react-router'
-import { isValidEmail, MIN_PASSWORD_LENGTH } from '../utils/validation'
+import { isValidEmail, isValidPassword, hasPasswordNumber, MIN_PASSWORD_LENGTH } from '../utils/validation'
 
 export default function SignUp() {
   const [name, setName] = useState('')
@@ -43,7 +43,7 @@ export default function SignUp() {
     } else if (password.length < MIN_PASSWORD_LENGTH) {
       newErrors.password = 'Senha deve ter no mínimo 8 caracteres'
       valid = false
-    } else if (!/\d/.test(password)) {
+    } else if (!hasPasswordNumber(password)) {
       newErrors.password = 'Senha deve conter pelo menos 1 número'
       valid = false
     }
@@ -63,8 +63,7 @@ export default function SignUp() {
   const isFormValid =
     !!name &&
     isValidEmail(email) &&
-    password.length >= MIN_PASSWORD_LENGTH &&
-    /\d/.test(password) &&
+    isValidPassword(password) &&
     confirmPassword === password
 
   async function handleSubmit() {
@@ -80,7 +79,7 @@ export default function SignUp() {
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 409) {
         setErrors(prev => ({ ...prev, email: 'Este email já está cadastrado' }))
-      } else if (axios.isAxiosError(err) && err.response?.status === 400) {
+      } else if (axios.isAxiosError(err) && err.response?.status === 400 && err.response.data.fields) {
         const fields = err.response.data.fields
         setErrors(prev => ({
           ...prev,

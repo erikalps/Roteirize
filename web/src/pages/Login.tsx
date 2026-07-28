@@ -56,6 +56,13 @@ function Login(){
             } catch (err) {
                 if(axios.isAxiosError(err) && err.response?.status === 401){
                     setGeneralError('Email ou senha inválidos')
+                } else if(axios.isAxiosError(err) && err.response?.status === 400 && err.response.data.fields){
+                    const fields = err.response.data.fields
+                    setErrors(prev => ({
+                        ...prev,
+                        ...(fields.email && { email: fields.email[0] }),
+                        ...(fields.password && { password: fields.password[0] }),
+                    }))
                 } else {
                     setGeneralError('Erro ao conectar com o servidor')
                 }
