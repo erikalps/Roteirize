@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router'
+import axios from 'axios'
 import api from "../services/api";
 import { isValidEmail} from '../utils/validation'
 
@@ -36,7 +37,7 @@ function Login(){
         return valid
     }
 
-    const isFormValid = !!email && !!password 
+    const isFormValid = isValidEmail(email) && !!password
 
     
          async function handleSubmit(){
@@ -52,9 +53,8 @@ function Login(){
                 navigate('/dashboard')
 
 
-            } catch (err: any) {
-                console.log(err)
-                if(err.response?.status === 401){
+            } catch (err) {
+                if(axios.isAxiosError(err) && err.response?.status === 401){
                     setGeneralError('Email ou senha inválidos')
                 } else {
                     setGeneralError('Erro ao conectar com o servidor')
