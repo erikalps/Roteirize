@@ -1,0 +1,77 @@
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router';
+import api from '../../services/api';
+
+
+interface User {
+    id: String,
+    name: String,
+    email: String,
+    creat_at: String
+}
+
+interface AuthContextType {
+    user: User | null;
+    loading: boolean;
+    login: (token: string, user: User) => void;
+    logout: () => void;
+}
+
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        async function checkout() {
+            const token = localStorage.getItem('roteirize_token')
+           
+
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await api.get('/auth/me')
+                setUser(response.data)
+            } catch (error) {
+                localStorage.removeItem('roteirize_token');
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        checkout();
+
+    }, []);
+
+
+    function login(token: string, user: User) {
+        localStorage.setItem('roteirize_token', token);
+        setUser(user);
+    }
+
+    function logout() {
+        localStorage.removeItem('roteirize_token');
+        setUser(null);
+        navigate('/login');
+    }
+
+    return (
+        <AuthContext.Provider value={{ user, loading, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    )
+}
+    export function useAuth() {
+        const context = useContext(AuthContext);
+        if (!context) {
+            throw new Error('useAuth precisa ser usado dentro de um AuthProvider');
+        }
+        return context;
+    }

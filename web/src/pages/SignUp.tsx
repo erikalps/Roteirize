@@ -2,6 +2,9 @@ import { useState } from 'react'
 import api from '../services/api'
 import { Link } from 'react-router'
 import { isValidEmail, MIN_PASSWORD_LENGTH } from '../utils/validation'
+import { useAuth } from '../features/auth/AuthContext'
+import { Navigate } from 'react-router'
+
 
 export default function SignUp() {
   const [name, setName] = useState('')
@@ -12,12 +15,20 @@ export default function SignUp() {
   const [successMessage, setSuccessMessage] = useState('')
   const [generalError, setGeneralError] = useState('')
 
+
   const [errors, setErrors] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   })
+
+
+  const { user, loading: authLoading} = useAuth()
+
+  if (authLoading) return <p>Carregando...</p>
+  if (user) return <Navigate to="/dashboard" replace />
+
 
   function validate() {
     const newErrors = { name: '', email: '', password: '', confirmPassword: '' }
@@ -63,7 +74,7 @@ export default function SignUp() {
     !!name &&
     !!email &&
     !!password &&
-    !!confirmPassword 
+    !!confirmPassword
 
   async function handleSubmit() {
     if (!validate()) return
@@ -88,7 +99,7 @@ export default function SignUp() {
         }))
       } else {
         setGeneralError('Não foi possível concluir o cadastro')
-        
+
       }
     } finally {
       setLoading(false)
