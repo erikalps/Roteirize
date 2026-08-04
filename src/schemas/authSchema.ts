@@ -6,7 +6,7 @@ export const loginSchema = z.object({
     .transform((val) => val.toLowerCase().trim()),
   password: z
     .string({ error: 'Senha é obrigatória' })
-    .min(1, 'Senha é obrigatória'),
+    .min(1, { error: 'Senha é obrigatória' }),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

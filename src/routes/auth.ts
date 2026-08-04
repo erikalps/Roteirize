@@ -60,7 +60,14 @@ router.get('/me', authenticate, async (req, res) => {
       return res.status(401).json({ error: 'Usuário não encontrado' });
     }
 
-    return res.status(200).json(result.rows[0]);
+    const user = result.rows[0];
+
+    return res.status(200).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.created_at,
+    });
   } catch (err) {
     console.error('Erro ao buscar usuário:', err);
     return res.status(500).json({ error: 'Erro interno do servidor' });

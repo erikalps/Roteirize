@@ -8,7 +8,7 @@ interface User {
     id: String,
     name: String,
     email: String,
-    creat_at: String
+    createdAt: String
 }
 
 interface AuthContextType {

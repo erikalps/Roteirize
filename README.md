@@ -43,10 +43,16 @@ npm install
 npm run dev
 ```
 
-Instalar dependências e rodar o front-end:
+Configurar variáveis de ambiente do front-end:
 
 ```bash
 cd web
+cp .env.example .env
+```
+
+Instalar dependências e rodar o front-end:
+
+```bash
 npm install
 npm run dev
 ```
