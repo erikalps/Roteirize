@@ -3,6 +3,8 @@ import axios from 'axios'
 import api from '../services/api'
 import { Link } from 'react-router'
 import { isValidEmail, isValidPassword, hasPasswordNumber, MIN_PASSWORD_LENGTH } from '../utils/validation'
+import { useAuth } from '../features/auth/AuthContext'
+import { Navigate } from 'react-router'
 
 export default function SignUp() {
   const [name, setName] = useState('')
@@ -19,6 +21,11 @@ export default function SignUp() {
     password: '',
     confirmPassword: '',
   })
+
+  const { user, loading: authLoading } = useAuth()
+
+  if (authLoading) return <p>Carregando...</p>
+  if (user) return <Navigate to="/dashboard" replace />
 
   function validate() {
     const newErrors = { name: '', email: '', password: '', confirmPassword: '' }

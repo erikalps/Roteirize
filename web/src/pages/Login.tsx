@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router'
 import axios from 'axios'
 import api from "../services/api";
 import { isValidEmail} from '../utils/validation'
+import { useAuth } from "../features/auth/AuthContext";
+import { Navigate } from "react-router";
 
 function Login(){
 
@@ -13,7 +15,11 @@ function Login(){
     const [generalError, setGeneralError] = useState('')
 
     const navigate = useNavigate()
+    const { user, loading: authLoading, login } = useAuth()
 
+
+    if(authLoading) return <p>Carregando...</p>
+    if(user) return <Navigate to="/dashboard" replace />
 
     function validate(){
         const newErrors = {email:'', password:''}
@@ -49,7 +55,7 @@ function Login(){
             try {
                 
                 const response = await api.post('/auth/login', {email, password })
-                localStorage.setItem('roteirize_token', response.data.token)
+                 login(response.data.token, response.data.user)
                 navigate('/dashboard')
 
 

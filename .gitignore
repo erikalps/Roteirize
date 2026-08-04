@@ -5,3 +5,7 @@ dist/
 # Frontend
 web/node_modules
 web/dist
+
+# Ferramentas locais
+CLAUDE.md
+.claude/
