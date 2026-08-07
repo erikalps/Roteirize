@@ -1,3 +1,4 @@
+-- Up Migration
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(50),
@@ -5,3 +6,6 @@ CREATE TABLE users (
   password_hash VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Down Migration
+DROP TABLE users;
