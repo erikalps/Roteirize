@@ -36,10 +36,21 @@ Configurar variáveis de ambiente:
 cp .env.example .env
 ```
 
-Instalar dependências e rodar o back-end:
+Instalar dependências:
 
 ```bash
 npm install
+```
+
+Criar o schema do banco:
+
+```bash
+npm run migrate:up
+```
+
+Rodar o back-end:
+
+```bash
 npm run dev
 ```
 
@@ -68,6 +79,20 @@ Back-end em `http://localhost:3001`, front-end em `http://localhost:5173`.
 | POST   | `/auth/login`| Não          | Login (retorna JWT)                |
 | GET    | `/auth/me`   | Sim          | Dados do usuário autenticado       |
 
+## Banco de dados
+
+O schema é gerenciado por migrations com [node-pg-migrate](https://github.com/salsita/node-pg-migrate). Os arquivos ficam em `migrations/`, em SQL puro, com as seções separadas pelos marcadores `-- Up Migration` e `-- Down Migration`.
+
+```bash
+npm run migrate:up              # aplica as migrations pendentes
+npm run migrate:down            # desfaz a última migration
+npm run migrate:create nome-da-migration   # gera um novo arquivo .sql em migrations/
+```
+
+O runner registra o que já foi aplicado na tabela `pgmigrations`, criada por ele no primeiro `migrate:up`. Ela é controle interno da ferramenta e não deve ser consultada nem alterada pela aplicação.
+
+Migration já aplicada nunca é editada — qualquer mudança de schema entra como uma migration nova.
+
 ## Estrutura do projeto
 
 ```
@@ -75,8 +100,6 @@ Roteirize/
 ├── src/
 │   ├── config/
 │   │   └── db.ts
-│   ├── database/
-│   │   └── migrations/
 │   ├── middlewares/
 │   │   ├── validate.ts
 │   │   └── authenticate.ts
@@ -89,6 +112,7 @@ Roteirize/
 │   ├── types/
 │   │   └── express.d.ts
 │   └── server.ts
+├── migrations/
 ├── requests/
 ├── web/
 │   └── src/
