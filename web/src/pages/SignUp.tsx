@@ -5,7 +5,8 @@ import { Link } from 'react-router'
 import { isValidEmail, isValidPassword, hasPasswordNumber, MIN_PASSWORD_LENGTH } from '../utils/validation'
 import { useAuth } from '../features/auth/AuthContext'
 import { Navigate } from 'react-router'
-import './SignUp.css'
+import './auth.css'
+
 
 
 
@@ -106,9 +107,9 @@ export default function SignUp() {
   }
 
   return (
-    <div className='signup-page'>
-      <div className='signup-container'>
-        <h1 className='signup-title'>Cadastro</h1>
+    <div className='auth-page'>
+      <div className='auth-form'>
+        <h1 className='auth-title'>Cadastro</h1>
 
         {successMessage && <p className='success-message'>{successMessage}</p>}
         {generalError && <p className='general-error'>{generalError}</p>}
@@ -116,6 +117,7 @@ export default function SignUp() {
         <div className='input-container'>
           <input
             placeholder="Nome"
+            aria-label="Nome"
             value={name}
             onChange={e => setName(e.target.value)}
           />
@@ -125,6 +127,7 @@ export default function SignUp() {
         <div className='input-container'>
           <input
             placeholder="Email"
+            aria-label="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
@@ -135,6 +138,7 @@ export default function SignUp() {
           <input
             type="password"
             placeholder="Senha"
+            aria-label="Senha"
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
@@ -145,6 +149,7 @@ export default function SignUp() {
           <input
             type="password"
             placeholder="Confirmar senha"
+            aria-label="Confirmar senha"
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
           />
@@ -154,20 +159,17 @@ export default function SignUp() {
         <button className='submit-button' onClick={handleSubmit} disabled={!isFormValid || loading}>
           {loading ? 'Cadastrando...' : 'Cadastrar'}
         </button>
-
       </div>
-      <div className='signup-panel'>
-        <span id='title-sign'>Roteirize</span>
+
+      <div className='auth-panel'>
+        <span className='auth-brand'>Roteirize</span>
         <svg className='plane-icon' width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
         </svg>
         <h2>Sua próxima viagem começa aqui</h2>
         <p>Monte roteiros com seus amigos, vote nas paradas e organize tudo num só lugar.</p>
-        <p className='login-link'>Já tem conta?<Link to="/login">Entrar</Link></p>
+        <p className='auth-panel-link'>Já tem conta?<Link to="/login">Entrar</Link></p>
       </div>
-
     </div>
-
-
   )
 }
