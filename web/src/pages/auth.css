@@ -1,17 +1,13 @@
-.signup-page {
+.auth-page {
   display: flex;
   max-width: 1000px;
   width: 90%;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--text-primary);
-
-
-  
 }
 
-
-.signup-container {
+.auth-form {
   flex: 1;
   max-width: none;
   margin: 0;
@@ -19,18 +15,17 @@
   background: #fff;
   border: none;
   border-radius: 0;
-  
 }
 
-.signup-title{
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 22px;
-    color: var(--text-primary);
-    margin-bottom: 20px;
+.auth-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text-primary);
+  margin-bottom: 20px;
 }
 
-.signup-panel {
+.auth-panel {
   flex: 1;
   background: var(--accent-pink);
   padding: 48px 56px;
@@ -39,10 +34,9 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
-
 }
 
-.signup-panel h2{
+.auth-panel h2 {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 24px;
@@ -50,19 +44,18 @@
   margin-bottom: 12px;
 }
 
-
-.signup-panel p{
+.auth-panel p {
   font-size: 14px;
   color: #8A5064;
   line-height: 1.5;
   margin-bottom: 28px;
 }
 
-.login-link {
+.auth-panel .auth-panel-link {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.5px;
-  color:  #5C2436;
+  color: #5C2436;
   border: 1px solid #5C2436;
   border-radius: 20px;
   padding: 8px 16px;
@@ -70,23 +63,21 @@
   transition: transform 0.50s ease;
 }
 
-.login-link:hover{
+.auth-panel .auth-panel-link:hover {
   transform: scale(1.03);
-  color: var(--font-mono);
   font-size: 15px;
-
 }
 
-.login-link a {
+.auth-panel-link a {
   color: inherit;
   margin-left: 4px;
 }
 
-.input-container{
-  margin-bottom:  14px;
+.input-container {
+  margin-bottom: 14px;
 }
 
-.input-container input{
+.input-container input {
   width: 100%;
   background: #fff;
   border: 1px solid var(--text-primary);
@@ -97,9 +88,8 @@
   font-family: var(--font-body);
 }
 
-
-.submit-button{
-   width: 100%;
+.submit-button {
+  width: 100%;
   background: var(--button-bg);
   color: var(--button-text);
   border: none;
@@ -112,14 +102,13 @@
   transition: transform 0.50s ease;
 }
 
-.submit-button:hover{
+.submit-button:hover {
   transform: scale(1.03);
 }
 
-
-.plane-icon{
-  position:absolute;
-  top:40px;
+.plane-icon {
+  position: absolute;
+  top: 40px;
   left: -30px;
   color: #5C2436;
   animation: fly-across 8s linear infinite;
@@ -159,21 +148,21 @@
   animation: fly-border 10s linear infinite;
 }
 
-#title-sign{
- margin-bottom: 10px;
- font-family: var(--font-mono);
+.auth-brand {
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
 }
 
 @media (max-width: 700px) {
-  .signup-page {
+  .auth-page {
     flex-direction: column;
     width: 92%;
     max-width: 420px;
-    margin:15px;
+    margin: 15px;
   }
 
-  .signup-container,
-  .signup-panel {
+  .auth-form,
+  .auth-panel {
     padding: 32px 28px;
   }
 
