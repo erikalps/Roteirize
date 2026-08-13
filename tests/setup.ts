@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { afterAll } from 'vitest';
+import { afterAll,  beforeEach } from 'vitest';
 
 
 dotenv.config({ path: '.env.test' });
@@ -14,3 +14,9 @@ afterAll(async () => {
   const { db } = await import('../src/config/db');
   await db.end();
 });
+
+
+beforeEach((async ()=>{
+    const {db} = await import('../src/config/db');
+    await db.query('TRUNCATE TABLE users CASCADE')
+}));
