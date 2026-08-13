@@ -14,7 +14,7 @@ describe('POST/auth/login', () => {
 
 
         const resposta = await request(app).post('/auth/login').send({
-             email: 'ana@teste.com',
+            email: 'ana@teste.com',
             password: 'senha1234',
         })
 
@@ -25,20 +25,20 @@ describe('POST/auth/login', () => {
         const payload = jwt.verify(
             resposta.body.token,
             process.env.JWT_SECRET as string
-        ) as {userId:string};
+        ) as { userId: string };
 
         expect(payload.userId).toBe(resposta.body.user.id);
     });
 
-    it('retorna 401 quando a senha está incorreta', async()=>{
+    it('retorna 401 quando a senha está incorreta', async () => {
         await request(app).post('/users').send({
-            name:'ana',
-            email:'ana@teste.com',
-            password:'senha1234'
+            name: 'ana',
+            email: 'ana@teste.com',
+            password: 'senha1234'
         });
 
         const resposta = await request(app).post('/auth/login').send({
-            email:'ana@teste.com',
+            email: 'ana@teste.com',
             password: 'ana123'
         });
 
@@ -47,10 +47,10 @@ describe('POST/auth/login', () => {
         expect(resposta.body.error).toBe('Credenciais inválidas');
     })
 
-    it('retorna 401 quando o email não existe', async()=>{
+    it('retorna 401 quando o email não existe', async () => {
         const resposta = await request(app).post('/auth/login').send({
-            email:'ninguem@test.com',
-            password:'senha1234',
+            email: 'ninguem@test.com',
+            password: 'senha1234',
         });
 
 
@@ -58,4 +58,61 @@ describe('POST/auth/login', () => {
         expect(resposta.body.error).toBe('Credenciais inválidas');
     })
 
-})
+
+
+});
+
+describe('GET /auth/me', () => {
+    it('retorna 200 com os dados do usuário quando o token é válido', async () => {
+        await request(app).post('/users').send({
+            name: 'Ana',
+            email: 'ana@teste.com',
+            password: 'senha1234',
+        });
+
+        const login = await request(app).post('/auth/login').send({
+            email: 'ana@teste.com',
+            password: 'senha1234',
+        });
+
+        const resposta = await request(app)
+            .get('/auth/me')
+            .set('Authorization', `Bearer ${login.body.token}`);
+
+        expect(resposta.status).toBe(200);
+        expect(resposta.body.email).toBe('ana@teste.com');
+        expect(resposta.body.name).toBe('Ana');
+    });
+
+
+    it('retorna 401 1quando não há header de autorização', async()=>{
+        const resposta = await request(app).get('/auth/me');
+        
+        expect(resposta.status).toBe(401);
+
+    });
+
+    it('retorna 401 quando o token é malformado', async()=>{
+        const resposta = await request(app).get('/auth/me')
+        .set('Authorization', 'Bearer token-invalido')
+
+        expect(resposta.status).toBe(401);
+    })
+
+
+    it('retorna 401 quando o token está expirado', async()=>{
+        const tokenExpirado = jwt.sign(
+            {userId: 'qualquer-id'},
+            process.env.JWT_SECRET as string,
+            {expiresIn: '-1h'}
+        );
+
+
+        const resposta = await request(app)
+        .get('/auth/me') 
+         .set('Authorization', `Bearer ${tokenExpirado}`);
+
+
+        expect(resposta.status).toBe(401);
+    })
+});
