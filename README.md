@@ -1,5 +1,7 @@
 # Roteirize
 
+![CI](https://github.com/erikalps/Roteirize/actions/workflows/ci.yml/badge.svg)
+
 App colaborativo de planejamento de viagens em grupo.
 
 > **Status:** em desenvolvimento inicial. Cadastro, login e autenticação implementados.
@@ -69,6 +71,21 @@ npm run dev
 ```
 
 Back-end em `http://localhost:3001`, front-end em `http://localhost:5173`.
+
+
+
+## Como rodar os testes
+
+Os testes usam um banco separado (`roteirize_test`) para não afetar os dados de desenvolvimento.
+
+Com o Docker rodando, crie o banco de teste:
+
+```bash
+docker compose exec postgres psql -U postgres -c "CREATE DATABASE roteirize_test;"
+```
+
+Crie o arquivo `.env.test` na raiz:
+
 
 ## Endpoints disponíveis
 
