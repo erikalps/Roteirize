@@ -5,10 +5,10 @@ import api from '../../services/api';
 
 
 interface User {
-    id: String,
-    name: String,
-    email: String,
-    createdAt: String
+    id: string,
+    name: string,
+    email: string,
+    createdAt: string
 }
 
 interface AuthContextType {
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             try {
                 const response = await api.get('/auth/me')
                 setUser(response.data)
-            } catch (error) {
+            } catch {
                 localStorage.removeItem('roteirize_token');
                 setUser(null);
             } finally {
@@ -68,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         </AuthContext.Provider>
     )
 }
+    // eslint-disable-next-line react-refresh/only-export-components
     export function useAuth() {
         const context = useContext(AuthContext);
         if (!context) {
