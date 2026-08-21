@@ -3,6 +3,12 @@ import axios from 'axios'
 import api from '../services/api'
 import { Link } from 'react-router'
 import { isValidEmail, isValidPassword, hasPasswordNumber, MIN_PASSWORD_LENGTH } from '../utils/validation'
+import { useAuth } from '../features/auth/AuthContext'
+import { Navigate } from 'react-router'
+import './auth.css'
+
+
+
 
 export default function SignUp() {
   const [name, setName] = useState('')
@@ -19,6 +25,11 @@ export default function SignUp() {
     password: '',
     confirmPassword: '',
   })
+
+  const { user, loading: authLoading } = useAuth()
+
+  if (authLoading) return <p>Carregando...</p>
+  if (user) return <Navigate to="/dashboard" replace />
 
   function validate() {
     const newErrors = { name: '', email: '', password: '', confirmPassword: '' }
@@ -96,54 +107,69 @@ export default function SignUp() {
   }
 
   return (
-    <div>
-      <h1>Cadastro</h1>
+    <div className='auth-page'>
+      <div className='auth-form'>
+        <h1 className='auth-title'>Cadastro</h1>
 
-      {successMessage && <p>{successMessage}</p>}
-      {generalError && <p>{generalError}</p>}
+        {successMessage && <p className='success-message'>{successMessage}</p>}
+        {generalError && <p className='general-error'>{generalError}</p>}
 
-      <div>
-        <input
-          placeholder="Nome"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-        {errors.name && <p>{errors.name}</p>}
+        <div className='input-container'>
+          <input
+            placeholder="Nome"
+            aria-label="Nome"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+          {errors.name && <p className='field-error'>{errors.name}</p>}
+        </div>
+
+        <div className='input-container'>
+          <input
+            placeholder="Email"
+            aria-label="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          {errors.email && <p className='field-error'>{errors.email}</p>}
+        </div>
+
+        <div className='input-container'>
+          <input
+            type="password"
+            placeholder="Senha"
+            aria-label="Senha"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          {errors.password && <p className='field-error'>{errors.password}</p>}
+        </div>
+
+        <div className='input-container'>
+          <input
+            type="password"
+            placeholder="Confirmar senha"
+            aria-label="Confirmar senha"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+          />
+          {errors.confirmPassword && <p className='field-error'>{errors.confirmPassword}</p>}
+        </div>
+
+        <button className='submit-button' onClick={handleSubmit} disabled={!isFormValid || loading}>
+          {loading ? 'Cadastrando...' : 'Cadastrar'}
+        </button>
       </div>
 
-      <div>
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        {errors.email && <p>{errors.email}</p>}
+      <div className='auth-panel'>
+        <span className='auth-brand'>Roteirize</span>
+        <svg className='plane-icon' width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+        </svg>
+        <h2>Sua próxima viagem começa aqui</h2>
+        <p>Monte roteiros com seus amigos, vote nas paradas e organize tudo num só lugar.</p>
+        <p className='auth-panel-link'>Já tem conta?<Link to="/login">Entrar</Link></p>
       </div>
-
-      <div>
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        {errors.password && <p>{errors.password}</p>}
-      </div>
-
-      <div>
-        <input
-          type="password"
-          placeholder="Confirmar senha"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
-        />
-        {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-      </div>
-
-      <button onClick={handleSubmit} disabled={!isFormValid || loading}>
-        {loading ? 'Cadastrando...' : 'Cadastrar'}
-      </button>
-      <p>Já tem conta?<Link to="/login">Entrar</Link></p>
     </div>
   )
 }

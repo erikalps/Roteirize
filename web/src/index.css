@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap');
+
+:root {
+  --bg: #FCE9A8;
+  --text-primary: #3D2E0C;
+  --text-secondary: #7A6529;
+  --accent-pink: #F0B7C6;
+  --accent-blue: #A9CDEC;
+  --accent-yellow: #F5C64F;
+  --button-bg: #3D2E0C;
+  --button-text: #FCE9A8;
+  --input-border: #EAD68C;
+  --link-color: #5A7DA8;
+
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #fff;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

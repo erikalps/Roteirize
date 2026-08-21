@@ -1,0 +1,12 @@
+-- Up Migration
+ALTER TABLE users
+  ALTER COLUMN name SET NOT NULL,
+  ALTER COLUMN email SET NOT NULL,
+  ALTER COLUMN password_hash SET NOT NULL;
+
+-- Down Migration
+ALTER TABLE users
+  ALTER COLUMN name DROP NOT NULL,
+  ALTER COLUMN email DROP NOT NULL,
+  ALTER COLUMN password_hash DROP NOT NULL;
+

@@ -1,7 +1,12 @@
 .env
+.env.test
 node_modules/
 dist/
 
 # Frontend
 web/node_modules
 web/dist
+
+# Ferramentas locais
+CLAUDE.md
+.claude/
