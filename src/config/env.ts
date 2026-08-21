@@ -5,6 +5,7 @@ import { z } from 'zod';
 const envSchema = z.object({
   DATABASE_URL: z.url({ error: 'DATABASE_URL deve ser uma URL válida' }),
   JWT_SECRET: z.string({ error: 'JWT_SECRET é obrigatório' }).min(1),
+  CORS_ORIGIN: z.url({ error: 'CORS_ORIGIN deve ser uma URL válida' }),
   PORT: z.coerce.number().default(3001),
 });
 
