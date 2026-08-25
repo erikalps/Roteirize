@@ -4,12 +4,13 @@ import cors from 'cors';
 import { db } from './config/db';
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
+import { env } from './config/env';
 
 const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: env.CORS_ORIGIN,
   })
 );
 
@@ -26,6 +27,5 @@ app.get('/health', async (_req, res) => {
     res.status(500).json({ status: 'error', db: 'disconnected' });
   }
 });
-
 
 export default app;
