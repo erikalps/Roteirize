@@ -17,6 +17,7 @@ function Login() {
     const navigate = useNavigate()
     const { user, loading: authLoading, login } = useAuth()
 
+    const [slowRequest, setSlowRequest] = useState(false)
 
     if (authLoading) return <p>Carregando...</p>
     if (user) return <Navigate to="/dashboard" replace />
@@ -52,6 +53,9 @@ function Login() {
         setLoading(true)
         setGeneralError('')
 
+        setSlowRequest(false)
+        const slowTimer = setTimeout(() => setSlowRequest(true), 4000)
+
         try {
 
             const response = await api.post('/auth/login', { email, password })
@@ -73,9 +77,14 @@ function Login() {
                 setGeneralError('Erro ao conectar com o servidor')
             }
         } finally {
+            clearTimeout(slowTimer)
+            setSlowRequest(false)
             setLoading(false)
         }
     }
+
+
+
 
     return (
         <div className="auth-page auth-page--login">
@@ -83,7 +92,7 @@ function Login() {
                 <h1 className="auth-title">Entrar</h1>
 
                 {generalError && <p className="general-error">{generalError}</p>}
-
+                {slowRequest && <p className="slow-warning">O servidor está acordando. A primeira entrada pode levar até um minuto.</p>}
                 <div className="input-container">
                     <input
                         type="email"
