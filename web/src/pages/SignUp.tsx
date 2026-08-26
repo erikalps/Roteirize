@@ -18,7 +18,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [generalError, setGeneralError] = useState('')
-
+  const [slowRequest, setSlowRequest] = useState(false)
   const [errors, setErrors] = useState({
     name: '',
     email: '',
@@ -30,6 +30,7 @@ export default function SignUp() {
 
   if (authLoading) return <p>Carregando...</p>
   if (user) return <Navigate to="/dashboard" replace />
+
 
   function validate() {
     const newErrors = { name: '', email: '', password: '', confirmPassword: '' }
@@ -84,6 +85,8 @@ export default function SignUp() {
     setGeneralError('')
     setSuccessMessage('')
 
+    const slowTimer = setTimeout(() => setSlowRequest(true), 4000)
+
     try {
       await api.post('/users', { name, email, password })
       setSuccessMessage('Cadastro realizado com sucesso!')
@@ -102,6 +105,8 @@ export default function SignUp() {
         setGeneralError('Não foi possível concluir o cadastro')
       }
     } finally {
+      clearTimeout(slowTimer)
+      setSlowRequest(false)
       setLoading(false)
     }
   }
@@ -113,7 +118,7 @@ export default function SignUp() {
 
         {successMessage && <p className='success-message'>{successMessage}</p>}
         {generalError && <p className='general-error'>{generalError}</p>}
-
+        {slowRequest && <p className='slow-warning'>O servidor está acordando. O primeiro cadastro pode levar até um minuto.</p>}
         <div className='input-container'>
           <input
             placeholder="Nome"
