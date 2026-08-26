@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import axios from 'axios'
 import api from '../services/api'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { isValidEmail, isValidPassword, hasPasswordNumber, MIN_PASSWORD_LENGTH } from '../utils/validation'
 import { useAuth } from '../features/auth/AuthContext'
 import { Navigate } from 'react-router'
 import './auth.css'
+
 
 
 
@@ -19,6 +20,7 @@ export default function SignUp() {
   const [successMessage, setSuccessMessage] = useState('')
   const [generalError, setGeneralError] = useState('')
   const [slowRequest, setSlowRequest] = useState(false)
+  const navigate = useNavigate()
   const [errors, setErrors] = useState({
     name: '',
     email: '',
@@ -90,6 +92,7 @@ export default function SignUp() {
     try {
       await api.post('/users', { name, email, password })
       setSuccessMessage('Cadastro realizado com sucesso!')
+      setTimeout(() => navigate('/login'), 2500)
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 409) {
         setErrors(prev => ({ ...prev, email: 'Este email já está cadastrado' }))
@@ -114,56 +117,66 @@ export default function SignUp() {
   return (
     <div className='auth-page'>
       <div className='auth-form'>
-        <h1 className='auth-title'>Cadastro</h1>
+        {successMessage ? (
+          <div className='signup-success'>
+            <span className='signup-success-icon'>✓</span>
+            <h2>Cadastro realizado com sucesso</h2>
+            <p>Redirecionando para o login...</p>
+          </div>
+        ) : (
+          <>
+            <h1 className='auth-title'>Cadastro</h1>
 
-        {successMessage && <p className='success-message'>{successMessage}</p>}
-        {generalError && <p className='general-error'>{generalError}</p>}
-        {slowRequest && <p className='slow-warning'>O servidor está acordando. O primeiro cadastro pode levar até um minuto.</p>}
-        <div className='input-container'>
-          <input
-            placeholder="Nome"
-            aria-label="Nome"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
-          {errors.name && <p className='field-error'>{errors.name}</p>}
-        </div>
+            {generalError && <p className='general-error'>{generalError}</p>}
+            {slowRequest && <p className='slow-warning'>O servidor está acordando. O primeiro cadastro pode levar até um minuto.</p>}
 
-        <div className='input-container'>
-          <input
-            placeholder="Email"
-            aria-label="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-          {errors.email && <p className='field-error'>{errors.email}</p>}
-        </div>
+            <div className='input-container'>
+              <input
+                placeholder="Nome"
+                aria-label="Nome"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+              {errors.name && <p className='field-error'>{errors.name}</p>}
+            </div>
 
-        <div className='input-container'>
-          <input
-            type="password"
-            placeholder="Senha"
-            aria-label="Senha"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-          {errors.password && <p className='field-error'>{errors.password}</p>}
-        </div>
+            <div className='input-container'>
+              <input
+                placeholder="Email"
+                aria-label="Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+              {errors.email && <p className='field-error'>{errors.email}</p>}
+            </div>
 
-        <div className='input-container'>
-          <input
-            type="password"
-            placeholder="Confirmar senha"
-            aria-label="Confirmar senha"
-            value={confirmPassword}
-            onChange={e => setConfirmPassword(e.target.value)}
-          />
-          {errors.confirmPassword && <p className='field-error'>{errors.confirmPassword}</p>}
-        </div>
+            <div className='input-container'>
+              <input
+                type="password"
+                placeholder="Senha"
+                aria-label="Senha"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+              {errors.password && <p className='field-error'>{errors.password}</p>}
+            </div>
 
-        <button className='submit-button' onClick={handleSubmit} disabled={!isFormValid || loading}>
-          {loading ? 'Cadastrando...' : 'Cadastrar'}
-        </button>
+            <div className='input-container'>
+              <input
+                type="password"
+                placeholder="Confirmar senha"
+                aria-label="Confirmar senha"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+              />
+              {errors.confirmPassword && <p className='field-error'>{errors.confirmPassword}</p>}
+            </div>
+
+            <button className='submit-button' onClick={handleSubmit} disabled={!isFormValid || loading}>
+              {loading ? 'Cadastrando...' : 'Cadastrar'}
+            </button>
+          </>
+        )}
       </div>
 
       <div className='auth-panel'>
