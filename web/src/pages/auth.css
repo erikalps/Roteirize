@@ -114,6 +114,17 @@
   animation: fly-across 8s linear infinite;
 }
 
+.slow-warning {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #FDF1F4;
+  border-left: 3px solid var(--accent-pink);
+  color: #5C2436;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 @keyframes fly-border {
   0% {
     top: 10px;
