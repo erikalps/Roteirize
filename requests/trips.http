@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:3001
+
+### Login para obter o token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "teste123"
+}
+
+### Criar viagem
+POST {{baseUrl}}/trips
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "title": "Férias no Chile",
+  "destination": "Santiago",
+  "start_date": "2026-03-15",
+  "end_date": "2026-03-22"
+}
+
+### Listar viagens
+GET {{baseUrl}}/trips
+Authorization: Bearer {{login.response.body.token}}
+
+### Criar sem token — espera 401
+POST {{baseUrl}}/trips
+Content-Type: application/json
+
+{
+  "title": "Sem token",
+  "destination": "Lugar nenhum",
+  "start_date": "2026-03-15",
+  "end_date": "2026-03-22"
+}
+
+### Criar com data de fim antes do início — espera 400
+POST {{baseUrl}}/trips
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "title": "Datas trocadas",
+  "destination": "Santiago",
+  "start_date": "2026-03-22",
+  "end_date": "2026-03-15"
+}
