@@ -5,6 +5,7 @@ import { db } from './config/db';
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
 import { env } from './config/env';
+import tripsRouter from './routes/trips';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(
 app.use(express.json());
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/trips', tripsRouter);
 
 app.get('/health', async (_req, res) => {
   try {
