@@ -2,8 +2,8 @@ import { Router, Request, Response } from 'express';
 import { db } from '../config/db'
 import { authenticate } from '../middlewares/authenticate';
 import { validate } from '../middlewares/validate';
-import { createTripSchema } from '../schemas/tripSchema';
-import { isInvalidTextRepresentation } from '../utils/db-errors';
+import { createTripSchema, updateTripSchema } from '../schemas/tripSchema';
+import { isInvalidTextRepresentation, isCheckViolation } from '../utils/db-errors';
 
 
 
@@ -76,7 +76,7 @@ router.get('/', authenticate, async (req: Request, res: Response) => {
             [req.userId]
         );
 
-       const trips = result.rows.map(toTripResponse);
+        const trips = result.rows.map(toTripResponse);
 
         return res.status(200).json(trips);
 
@@ -111,11 +111,11 @@ router.get('/:id', authenticate, async (req: Request, res: Response) => {
         return res.status(200).json(toTripResponse(trip))
 
     } catch (error: unknown) {
-        if(isInvalidTextRepresentation(error)){
+        if (isInvalidTextRepresentation(error)) {
             return res.status(404).json({ error: 'Viagem não encontrada' });
         }
-        
-         console.error('Erro ao buscar viagem:', error);
+
+        console.error('Erro ao buscar viagem:', error);
         return res.status(500).json({ error: 'Erro interno de servidor' });
 
     }
@@ -124,9 +124,9 @@ router.get('/:id', authenticate, async (req: Request, res: Response) => {
 
 
 
-router.delete('/:id', authenticate, async(req:Request, res: Response) =>{
-    const {id} = req.params;
-    
+router.delete('/:id', authenticate, async (req: Request, res: Response) => {
+    const { id } = req.params;
+
     try {
         const result = await db.query(
             `DELETE FROM trips 
@@ -135,20 +135,66 @@ router.delete('/:id', authenticate, async(req:Request, res: Response) =>{
             [id, req.userId]
         )
 
-        if(result.rowCount === 0){
-            return res.status(404).json({error: 'Viagem não encontrada'})
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Viagem não encontrada' })
         }
 
         return res.status(204).end();
 
     } catch (error: unknown) {
-        if(isInvalidTextRepresentation(error)){
-            return res.status(404).json({error:'Viagem não encontrada'})
+        if (isInvalidTextRepresentation(error)) {
+            return res.status(404).json({ error: 'Viagem não encontrada' })
         }
 
         console.error('Erro ao excluir viagem', error);
-        return res.status(500).json({error:'Erro interno do servidor'})
+        return res.status(500).json({ error: 'Erro interno de servidor' })
     }
-}) 
+})
+
+
+
+router.patch('/:id', authenticate, validate(updateTripSchema),
+
+    async (req: Request, res: Response) => {
+        const { id } = req.params
+        const { title, destination, start_date, end_date } = req.body
+        try {
+            const result = await db.query(
+                `UPDATE trips
+              SET title = COALESCE($1, title),
+                destination = COALESCE($2, destination),
+                start_date = COALESCE($3, start_date),
+                end_date = COALESCE($4, end_date),
+                updated_at = NOW()
+                WHERE id = $5 AND  user_id = $6
+                RETURNING id, user_id, title, destination, start_date,end_date, created_at, updated_at`,
+                [title ?? null, destination ?? null, start_date ?? null, end_date ?? null, id, req.userId]
+
+            )
+
+            if (result.rowCount === 0) {
+                return res.status(404).json({ error: 'Viagem não encontrada' })
+            }
+
+            return res.status(200).json(toTripResponse(result.rows[0]));
+
+
+        } catch (error: unknown) {
+            if (isInvalidTextRepresentation(error)) {
+                return res.status(404).json({ error: 'Viagem não encontrada' })
+
+            }
+
+            if (isCheckViolation(error)) {
+                return res.status(400).json({
+                    error: 'Dados inválidos',
+                    fields: { end_date: ['Data de fim não pode ser anterior à data de início'] },
+                });
+            }
+            console.error('erro ao atualizar viagem', error);
+            return res.status(500).json({ error: 'Erro interno de servidor' })
+        }
+
+    })
 export default router;
 
