@@ -6,9 +6,11 @@ export function validate(schema: ZodSchema) {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
+      const { formErrors, fieldErrors } = z.flattenError(result.error);
+
       return res.status(400).json({
-        error: 'Dados inválidos',
-        fields: z.flattenError(result.error).fieldErrors,
+        error: formErrors[0] ?? 'Dados inválidos',
+        fields: fieldErrors,
       });
     }
 

@@ -1,6 +1,13 @@
 @baseUrl = http://localhost:3001
 
-### Login para obter o token
+# Execute os blocos de cima para baixo.
+# Os ids são encadeados pelos blocos com "# @name", sem copiar e colar.
+
+# =====================================================================
+# Preparação
+# =====================================================================
+
+### Login do usuário principal — espera 200 com { token, user }
 # @name login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
@@ -10,7 +17,22 @@ Content-Type: application/json
   "password": "teste123"
 }
 
-### Criar viagem
+### Login de outro usuário — espera 200 com { token, user }
+# @name outroLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "erika@email.com",
+  "password": "12345678a"
+}
+
+# =====================================================================
+# POST /trips — criar
+# =====================================================================
+
+### Criar viagem — espera 201 com a viagem criada
+# @name criarViagem
 POST {{baseUrl}}/trips
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.token}}
@@ -22,9 +44,18 @@ Authorization: Bearer {{login.response.body.token}}
   "end_date": "2026-03-22"
 }
 
-### Listar viagens
-GET {{baseUrl}}/trips
-Authorization: Bearer {{login.response.body.token}}
+### Criar viagem do outro usuário — espera 201
+# @name criarViagemOutro
+POST {{baseUrl}}/trips
+Content-Type: application/json
+Authorization: Bearer {{outroLogin.response.body.token}}
+
+{
+  "title": "Viagem do outro usuário",
+  "destination": "Recife",
+  "start_date": "2026-05-01",
+  "end_date": "2026-05-05"
+}
 
 ### Criar sem token — espera 401
 POST {{baseUrl}}/trips
@@ -37,7 +68,7 @@ Content-Type: application/json
   "end_date": "2026-03-22"
 }
 
-### Criar com data de fim antes do início — espera 400
+### Criar com data de fim antes do início — espera 400 com { error, fields }
 POST {{baseUrl}}/trips
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.token}}
@@ -49,7 +80,80 @@ Authorization: Bearer {{login.response.body.token}}
   "end_date": "2026-03-15"
 }
 
+### Criar sem campos obrigatórios — espera 400 com { error, fields }
+POST {{baseUrl}}/trips
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
 
+{
+  "title": "Sem destino nem datas"
+}
 
+# =====================================================================
+# GET /trips — listar
+# =====================================================================
 
+### Listar viagens — espera 200 com array só das viagens do usuário principal
+GET {{baseUrl}}/trips
+Authorization: Bearer {{login.response.body.token}}
 
+### Listar sem token — espera 401
+GET {{baseUrl}}/trips
+
+# =====================================================================
+# GET /trips/:id — buscar uma
+# =====================================================================
+
+### Buscar viagem própria — espera 200 com a viagem
+GET {{baseUrl}}/trips/{{criarViagem.response.body.id}}
+Authorization: Bearer {{login.response.body.token}}
+
+### Buscar viagem do outro usuário — espera 404 { error: 'Viagem não encontrada' }
+GET {{baseUrl}}/trips/{{criarViagemOutro.response.body.id}}
+Authorization: Bearer {{login.response.body.token}}
+
+### Buscar id que não existe — espera 404 { error: 'Viagem não encontrada' }
+GET {{baseUrl}}/trips/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{login.response.body.token}}
+
+### Buscar com id malformado — espera 404 { error: 'Viagem não encontrada' }
+GET {{baseUrl}}/trips/banana
+Authorization: Bearer {{login.response.body.token}}
+
+### Buscar sem token — espera 401
+GET {{baseUrl}}/trips/{{criarViagem.response.body.id}}
+
+# =====================================================================
+# DELETE /trips/:id — excluir
+# =====================================================================
+
+### Excluir viagem do outro usuário — espera 404 { error: 'Viagem não encontrada' }
+DELETE {{baseUrl}}/trips/{{criarViagemOutro.response.body.id}}
+Authorization: Bearer {{login.response.body.token}}
+
+### Conferir que a viagem do outro usuário continua existindo — espera 200
+GET {{baseUrl}}/trips/{{criarViagemOutro.response.body.id}}
+Authorization: Bearer {{outroLogin.response.body.token}}
+
+### Excluir id que não existe — espera 404 { error: 'Viagem não encontrada' }
+DELETE {{baseUrl}}/trips/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{login.response.body.token}}
+
+### Excluir com id malformado — espera 404 { error: 'Viagem não encontrada' }
+DELETE {{baseUrl}}/trips/banana
+Authorization: Bearer {{login.response.body.token}}
+
+### Excluir sem token — espera 401
+DELETE {{baseUrl}}/trips/{{criarViagem.response.body.id}}
+
+### Excluir viagem própria — espera 204 sem corpo
+DELETE {{baseUrl}}/trips/{{criarViagem.response.body.id}}
+Authorization: Bearer {{login.response.body.token}}
+
+### Excluir a mesma viagem de novo — espera 404 { error: 'Viagem não encontrada' }
+DELETE {{baseUrl}}/trips/{{criarViagem.response.body.id}}
+Authorization: Bearer {{login.response.body.token}}
+
+### Buscar a viagem excluída — espera 404 { error: 'Viagem não encontrada' }
+GET {{baseUrl}}/trips/{{criarViagem.response.body.id}}
+Authorization: Bearer {{login.response.body.token}}
